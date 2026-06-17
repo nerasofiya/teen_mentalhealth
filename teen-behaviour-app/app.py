@@ -45,21 +45,22 @@ if selected == 'Habit Predictor':
 
     # Group 1: Demographics & Usage
     st.markdown("### Step 1: Core Metrics & Routine")
+    st.caption("Type your values directly into the text boxes below.")
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        age = st.number_input('Age of Teenager', min_value=13, max_value=19, value=15, step=1)
+        age_raw = st.text_input('Age of Teenager', value="15")
         gender_raw = st.selectbox('Gender', options=['Female', 'Male'])
-        daily_hours = st.number_input('Daily Social Media Use (Hours)', min_value=0.0, max_value=24.0, value=4.0, step=0.5)
+        daily_hours_raw = st.text_input('Daily Social Media Use (Hours)', value="4.0")
 
     with col2:
         platform_raw = st.selectbox('Primary Platform', options=['Instagram', 'TikTok', 'Both'])
-        sleep_hours = st.number_input('Average Nightly Sleep (Hours)', min_value=0.0, max_value=24.0, value=7.0, step=0.5)
-        screen_time_before_sleep = st.number_input('Pre-Bed Screen Time (Hours)', min_value=0.0, max_value=5.0, value=1.5, step=0.1)
+        sleep_hours_raw = st.text_input('Average Nightly Sleep (Hours)', value="7.0")
+        screen_time_before_sleep_raw = st.text_input('Pre-Bed Screen Time (Hours)', value="1.5")
 
     with col3:
-        academic_perf = st.number_input('Academic Performance (GPA)', min_value=0.0, max_value=4.0, value=3.0, step=0.01)
-        physical_act = st.number_input('Daily Exercise/Activity (Hours)', min_value=0.0, max_value=10.0, value=1.0, step=0.1)
+        academic_perf_raw = st.text_input('Academic Performance (GPA)', value="3.0")
+        physical_act_raw = st.text_input('Daily Exercise/Activity (Hours)', value="1.0")
         social_level_raw = st.selectbox('In-Person Socializing Level', options=['Low', 'Medium', 'High'])
 
     st.markdown("---")
@@ -87,6 +88,18 @@ if selected == 'Habit Predictor':
     # Prediction Action Layout
     if st.button('Run Analysis Report', use_container_width=True):
         if habit_model is not None:
+            # Safe text-to-number conversion handling blank text or typos
+            try:
+                age = int(age_raw)
+                daily_hours = float(daily_hours_raw)
+                sleep_hours = float(sleep_hours_raw)
+                screen_time_before_sleep = float(screen_time_before_sleep_raw)
+                academic_perf = float(academic_perf_raw)
+                physical_act = float(physical_act_raw)
+            except ValueError:
+                st.error("Please make sure all typed input fields contain only valid numbers before running the report.")
+                st.stop()
+
             user_input = [
                 age, gender, daily_hours, platform_usage, sleep_hours, 
                 screen_time_before_sleep, academic_perf, physical_act, 
